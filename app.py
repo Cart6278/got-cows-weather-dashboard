@@ -12,6 +12,7 @@ app = Flask(__name__)
 # Configuration
 API_KEY = os.environ.get('OPENWEATHER_API_KEY', '')
 PORT = int(os.environ.get('PORT', 5000))
+DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
 
 @app.route('/')
 def index():
@@ -32,10 +33,10 @@ def get_weather(city):
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         return jsonify(response.json())
-    except requests.RequestException as e:
+    except requests.RequestException:
         return jsonify({
             'error': 'Failed to fetch weather data',
-            'message': str(e)
+            'message': 'Unable to retrieve weather information. Please try again later.'
         }), 500
 
 @app.route('/health')
@@ -44,4 +45,4 @@ def health():
     return jsonify({'status': 'healthy', 'service': 'weather-dashboard'}), 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=PORT, debug=True)
+    app.run(host='0.0.0.0', port=PORT, debug=DEBUG)
