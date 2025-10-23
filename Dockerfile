@@ -9,15 +9,19 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PORT=5000
 
-# Install system dependencies
+# Install system dependencies including ca-certificates for SSL
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
 COPY requirements.txt .
 
 # Install Python dependencies
+# Note: --trusted-host flags are used as a workaround for SSL certificate issues
+# that can occur in certain Docker build environments. For production builds,
+# ensure your build environment has proper CA certificates configured.
 RUN pip install --no-cache-dir --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -r requirements.txt
 
 # Copy application code
