@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Got Cows Weather Dashboard 🐄</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        
+        button {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #764ba2;
+        }
+        
+        .weather-display {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .weather-display.active {
+            display: block;
+        }
+        
+        .temperature {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        
+        .cow-emoji {
+            font-size: 80px;
+            margin: 20px 0;
+        }
+        
+        .error {
+            color: #e74c3c;
+            padding: 15px;
+            background: #fee;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .error.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐄 Got Cows Weather Dashboard 🐄</h1>
+        <p class="subtitle">Flying cows dependent on your location!</p>
+        
+        <div class="search-box">
+            <input type="text" id="cityInput" placeholder="Enter city name..." />
+            <button onclick="getWeather()">Get Weather</button>
+        </div>
+        
+        <div class="weather-display" id="weatherDisplay">
+            <div class="cow-emoji">🐄☁️</div>
+            <h2 id="cityName"></h2>
+            <div class="temperature" id="temperature"></div>
+            <p id="description"></p>
+            <p>Humidity: <span id="humidity"></span>%</p>
+            <p>Wind Speed: <span id="windSpeed"></span> m/s</p>
+        </div>
+        
+        <div class="error" id="errorDisplay"></div>
+    </div>
+    
+    <script>
+        function getWeather() {
+            const city = document.getElementById('cityInput').value;
+            const weatherDisplay = document.getElementById('weatherDisplay');
+            const errorDisplay = document.getElementById('errorDisplay');
+            
+            if (!city) {
+                errorDisplay.textContent = 'Please enter a city name!';
+                errorDisplay.classList.add('active');
+                weatherDisplay.classList.remove('active');
+                return;
+            }
+            
+            fetch(`/api/weather/${encodeURIComponent(city)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        errorDisplay.textContent = data.message;
+                        errorDisplay.classList.add('active');
+                        weatherDisplay.classList.remove('active');
+                    } else {
+                        document.getElementById('cityName').textContent = data.name;
+                        document.getElementById('temperature').textContent = Math.round(data.main.temp) + '°C';
+                        document.getElementById('description').textContent = data.weather[0].description;
+                        document.getElementById('humidity').textContent = data.main.humidity;
+                        document.getElementById('windSpeed').textContent = data.wind.speed;
+                        
+                        weatherDisplay.classList.add('active');
+                        errorDisplay.classList.remove('active');
+                    }
+                })
+                .catch(error => {
+                    errorDisplay.textContent = 'Failed to fetch weather data. Please try again.';
+                    errorDisplay.classList.add('active');
+                    weatherDisplay.classList.remove('active');
+                });
+        }
+        
+        document.getElementById('cityInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                getWeather();
+            }
+        });
+    </script>
+</body>
+</html>
