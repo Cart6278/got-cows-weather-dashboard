@@ -6,12 +6,12 @@ A fun weather dashboard application that displays real-time weather information 
 
 ## Features
 
-- 🌤️ Real-time weather data from OpenWeatherMap API
-- 🐄 Fun flying cows theme
-- 🐳 Fully Dockerized for easy deployment
-- 💪 Production-ready with Gunicorn
-- 🔍 Health check endpoints
-- 📱 Responsive design
+- Real-time weather data from NOAA, NWS, and OpenWeatherMap API
+- Fun flying cows theme
+- Fully Dockerized for easy deployment
+- Production-ready with Gunicorn
+- Health check endpoints
+- Responsive design
 
 ## Prerequisites
 
@@ -118,4 +118,5 @@ MIT License
 
 ## Contributing
 
-Pull requests are welcome! For major changes, please open an issue first.
+This is a personal project, please reach out prior to contributing. Forking and building upon it for personal use is 
+allowed and encouraged!
