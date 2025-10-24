@@ -1,0 +1,44 @@
+<!-- frontend/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Got Cows Weather Platform 🐄</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="alerts"></div>
+    <div id="realtime-chart"></div>
+
+    <script>
+        // Connect to WebSocket for real-time updates
+        const ws = new WebSocket('ws://localhost:8000/ws/weather');
+        const alertWs = new WebSocket('ws://localhost:8000/ws/alerts');
+
+        // Real-time chart
+        const data = [{
+            x: [],
+            y: [],
+            type: 'scatter',
+            name: 'Temperature'
+        }];
+
+        ws.onmessage = (event) => {
+            const weather = JSON.parse(event.data);
+
+            // Update chart
+            Plotly.extendTraces('realtime-chart', {
+                x: [[new Date()]],
+                y: [[weather.data.temperature]]
+            }, [0]);
+        };
+
+        alertWs.onmessage = (event) => {
+            const alert = JSON.parse(event.data);
+            if (alert.type === 'COW_ALERT') {
+                // Show flying cow animation!
+                showFlyingCow(alert.message);
+            }
+        };
+    </script>
+</body>
+</html>

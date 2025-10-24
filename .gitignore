@@ -208,3 +208,6 @@ __marimo__/
 
 # JetBrains IDEs (e.g., PyCharm, IntelliJ IDEA, WebStorm, etc.)
 .idea/
+
+# Test files and directories for local development
+/test-redis.py

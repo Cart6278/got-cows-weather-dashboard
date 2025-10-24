@@ -9,7 +9,7 @@ import logging
 class NOAACollector:
     """Gathers real-time weather and alerts from the NOAA and NWS APIs."""
 
-    def __init__(self, stations=None, redis_url="redis://localhost", wind_speed_threshold=30, sleep_interval=300):
+    def __init__(self, stations=None, redis_url="redis://localhost", wind_speed_threshold=50, sleep_interval=300):
         """
         Initialize the NOAACollector.
 
@@ -51,12 +51,15 @@ class NOAACollector:
         :param data: Raw NOAA data.
         :return: Transformed data.
         """
-        # Example transformation (adjust as needed)
         return {
             "station": data.get("properties", {}).get("station"),
             "timestamp": data.get("properties", {}).get("timestamp"),
             "temperature": data.get("properties", {}).get("temperature", {}).get("value"),
             "wind_speed": data.get("properties", {}).get("windSpeed", {}).get("value"),
+            "precipitation": data.get("properties", {}).get("precipitationLastHour", {}).get("value"),
+            "pressure": data.get("properties", {}).get("barometricPressure", {}).get("value"),
+            "humidity": data.get("properties", {}).get("relativeHumidity", {}).get("value"),
+            "cloud_cover": data.get("properties", {}).get("cloudLayers", [{}])[0].get("amount"),
         }
 
     async def run_collector(self):
